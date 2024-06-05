@@ -1,9 +1,6 @@
 {
-  "en":
-  {
-    "language": "English",
-    "mainMenu": "Categories",
+    "title": "language",
+    "menu": "Categories",
     "subMenu": "Action",
     "menuActions": "Discounted"
   }
-}

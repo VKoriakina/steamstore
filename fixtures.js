@@ -1,8 +1,13 @@
 const base = require('@playwright/test');
-// const testDataJson = require('./onliner/test-data/testData.json');
+const ENJson = require('./steam-store/test-data/localization/EN.json');
+const DEJson = require('./steam-store/test-data/localization/DE.json')
+
 
 
 const fixtures = {
+    EN: [ ENJson, { option: true} ],
+    DE: [DEJson, { option: true} ],
+
 
     async page({page}, use){
         // chromium

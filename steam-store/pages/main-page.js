@@ -9,7 +9,6 @@ export class MainPage {
 
     }
 
-
     async navigateMenu(menu, submenu) {
         await test.step(`Navigate to ${submenu}`, async ()=>{
             await this.mainMenu.navigateMenuItem(menu);
@@ -18,11 +17,14 @@ export class MainPage {
     }
 
 
+
     async selectLanguage(name){
         await test.step('Select language', async ()=>{
             await this.mainMenu.selectLanguage(name);
         })
     }
+
+
 
 
 }

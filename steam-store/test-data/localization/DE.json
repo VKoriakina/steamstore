@@ -1,9 +1,7 @@
-{
-  "de":
+
   {
-    "language": "Deutsch",
-    "mainMenu": "Kategorien",
+    "title": "Sprache",
+    "menu": "Kategorien",
     "subMenu": "Action",
     "menuActions": "Im Angebot"
   }
-}

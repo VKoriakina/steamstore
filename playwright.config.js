@@ -23,6 +23,13 @@ module.exports = defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+
+  timeout: 60000,
+
+  expect: {
+    timeout: 40000,
+  },
+
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'https://store.steampowered.com/',
@@ -31,6 +38,8 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
     // locale: 'de-DE',
     // timezoneId: 'Europe/Berlin'
+    navigationTimeout: 30000,
+    actionTimeout: 40000,
   },
 
   /* Configure projects for major browsers */
