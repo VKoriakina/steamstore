@@ -1,15 +1,14 @@
 const base = require('@playwright/test');
-const ENJson = require('./steam-store/test-data/localization/EN.json');
-const DEJson = require('./steam-store/test-data/localization/DE.json')
-
-
+const testDataJson = require('./steam-store/test-data/age-data.json')
 
 const fixtures = {
-    EN: [ ENJson, { option: true} ],
-    DE: [DEJson, { option: true} ],
 
+    clientAge: [ testDataJson.clientAge, { option: true} ],
 
     async page({page}, use){
+
+
+
         // chromium
         const context = await base.chromium.launchPersistentContext('', {
             channel: 'chrome'
@@ -18,7 +17,7 @@ const fixtures = {
 
         await use(customPage);
     },
-    // async pageff({page}, use){
+    // async page({page}, use){
     //     // chromium
     //     const context = await base.firefox.launchPersistentContext('', {
     //         channel: 'chrome'

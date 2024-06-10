@@ -1,12 +1,16 @@
 const { expect, test } = require('@playwright/test');
 const path = require('path');
 const fs = require('fs');
+const {getLocalization} = require('../test-data/localization/getLocalization');
 
 export class MainMenu {
 
     constructor(page) {
+        this.currentLocale = getLocalization();
         this.page = page;
-        this.languageLocator = page.locator('//span[@class ="pulldown global_action_link"]');
+        this.menuLocator = this.page.locator(`//a[@class='pulldown_desktop' and text()='${this.currentLocale.menu}']`);
+        this.subMenuLocator = this.page.locator(`//a[@class='gutter_item' and contains(text(), '${this.currentLocale.subMenu}')]`);
+        this.menuActionLocator = this.page.locator(`//div[@class='Dhg57Pg1m91mAChUNE5_V Focusable' and contains(text(), '${this.currentLocale.menuActions}')]`);
 
     }
 
@@ -18,46 +22,17 @@ export class MainMenu {
         return this.page.locator('//div[@class="about_greeting_header"]/following-sibling::div');
     }
 
-    mainMenuLocator(item) {
-        return this.page.locator(`//a[@class='pulldown_desktop' and text()='${item}']`);
+
+async navigateMenuItem() {
+        await this.menuLocator.hover();
     }
 
-    SubMenuLocator(item) {
-        return this.page.locator(`//a[@class='gutter_item' and contains(text(), '${item}')]`);
+    async selectSubMenuItem() {
+        await this.subMenuLocator.click();
     }
 
-    menuActionLocator(item){
-        return this.page.locator(`//div[@class='Dhg57Pg1m91mAChUNE5_V Focusable' and contains(text(), '${item}')]`);
-    }
-
-    async languageDetermination() {
-        const languageText = await this.languageLocator.textContent();
-        if (languageText.includes('language')) {
-            return this.loadLanguageData('EN.json');
-        } else if (languageText.includes('Sprache')) {
-            return this.loadLanguageData('DE.json');
-        } else {
-            throw new Error(`Unsupported language text: ${languageText}`);
-        }
-    }
-
-    async loadLanguageData(fileName) {
-        const filePath = path.resolve(__dirname, `../test-data/localization/${fileName}`);
-        const jsonData = await fs.promises.readFile(filePath, 'utf8');
-        return JSON.parse(jsonData);
-    }
-
-
-async navigateMenuItem(name) {
-        await this.mainMenuLocator(name).hover();
-    }
-
-    async selectSubMenuItem(name) {
-        await this.SubMenuLocator(name).click();
-    }
-
-    async selectMenuAction(name){
-        await this.menuActionLocator(name).click();
+    async selectMenuAction(){
+        await this.menuActionLocator.click();
 
     }
     async installSteam() {

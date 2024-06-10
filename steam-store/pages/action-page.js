@@ -1,59 +1,70 @@
 const { expect, test } = require('@playwright/test');
 import { MainMenu} from "./main-menu";
+const {getLocalization} = require('../test-data/localization/getLocalization');
 
 export class ActionPage {
 
     constructor(page) {
+        this.currentLocale = getLocalization();
         this.page = page;
         this.mainMenu = new MainMenu(page);
-        this.rootGameLocator = page.locator('//div[@class = "y9MSdld4zZCuoQpRVDgMm"]');
-        this.discountLocator = this.rootGameLocator.locator('div._1gO7r6Xr5gQHoBBkERY0gd');
-        this.nameGameLocator = this.rootGameLocator.locator('div._1F4bcsKc9FjeWQ2TX8CWDe');
+        this.rootGameLocator = this.page.locator(".NO-IPpXzHDNjw_TLDlIo7");
+        this.discountLocator = this.rootGameLocator.locator('.Discounted ._2fpFvkG2gjtlAHB3ZxS-_7');
+        this.gamesLocator = this.rootGameLocator.locator('.Panel');
+        this.nameLocator = this.rootGameLocator.locator ('.StoreSaleWidgetTitle');
+        this.linkLocator = this.rootGameLocator.locator('._2Va3O50Z5ksJJcpvj-JFDI a');
     }
 
 
     async navigateSubMenu(name) {
-        await test.step(`Navigate to ${name}`, async () => {
-            // const ActionPromise = this.page.waitForResponse('**/action/**');
+        await test.step(`Navigate to ${this.currentLocale.menuActions}`, async () => {
             await this.page.waitForLoadState('load');
             await this.page.keyboard.press('End');
             await this.mainMenu.selectMenuAction(name);
-            // await ActionPromise;
         })
     }
 
-    // Выбор игры с максимальной скидкой
-    // async selectMaxDisc() {
-    //     // await this.page.waitForTimeout(2000);
-    //     //проверить что таблица со скидками отображается
-    //     //expect locator(table) to be visible, посмотреть assertions
-    //     await this.page.waitForLoadState('load');
-    //     const discountElements = await this.discountLocator.all();
-    //     const nameGameElements = await this.nameGameLocator.all();
-    //
-    //     // Убедиться, что есть хотя бы один элемент
-    //     // expect(discountElements.length, 'should have at least one item').toBeGreaterThan(0);
-    //
-    //     // Получить значения скидок
-    //     const discounts = await Promise.all(discountElements.map(async element => {
-    //         const discountText = await element.innerText();
-    //         const discountValue = parseInt(discountText.replace('%', ''), 10);
-    //         return discountValue;
-    //     }));
-    //
-    //     // Найти максимальную скидку
-    //     const maxDiscount = Math.max(...discounts);
-    //     const maxDiscountIndex = discounts.indexOf(maxDiscount);
-    //
-    //     // Получить название игры с максимальной скидкой
-    //     const gameName = await nameGameElements.nth(maxDiscountIndex).innerText();
-    //     console.log(`Игра с максимальной скидкой: ${gameName}`);
-    //
-    //     // Кликнуть на элемент с максимальной скидкой
-    //     await discountElements.nth(maxDiscountIndex).click();
-    //
-    //     return gameName;
-    // }
+
+    /**
+     * Find game with max
+     * @returns {Promise<{gameName: string, gameLink: string}>}
+     */
+    async findMaxDiscGame() {
+
+        await this.page.waitForLoadState('load');
+
+        const discountRoot = this.rootGameLocator;
+
+        const locators = this.discountLocator;
+        const discounts = (await locators.allInnerTexts()).map((discountString) => Math.abs(Number.parseFloat(discountString)));
+
+        const max = Math.max(...discounts); //spread operator
+
+       // console.log(await this.gamesLocator.nth(discounts.indexOf(max)).innerText());
+       const gameName = await this.nameLocator.nth(discounts.indexOf(max)).innerText();
+       console.log(gameName);
+
+       const gameLink = await this.linkLocator.nth(discounts.indexOf(max)).getAttribute("href");
+       console.log(gameLink);
+
+       return {
+           gameName,
+           gameLink
+       }
+
+    }
+
+    /**
+     *
+     * @param {string} url
+     * @returns {Promise<void>}
+     */
+    async openGame (url){
+
+    }
+
+
+
 
     async downloadingInstaller(){
         await test.step('Download installer', async ()=>{

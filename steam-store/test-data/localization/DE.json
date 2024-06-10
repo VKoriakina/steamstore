@@ -1,7 +1,6 @@
-
-  {
-    "title": "Sprache",
-    "menu": "Kategorien",
-    "subMenu": "Action",
-    "menuActions": "Im Angebot"
-  }
+{
+  "title": "Sprache",
+  "menu": "Kategorien",
+  "subMenu": "Action",
+  "menuActions": "Im Angebot"
+}
