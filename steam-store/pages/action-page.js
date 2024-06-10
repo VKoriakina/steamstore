@@ -2,6 +2,7 @@ const { expect, test } = require('@playwright/test');
 import { MainMenu} from "./main-menu";
 const {getLocalization} = require('../test-data/localization/getLocalization');
 
+
 export class ActionPage {
 
     constructor(page) {
@@ -10,9 +11,9 @@ export class ActionPage {
         this.mainMenu = new MainMenu(page);
         this.rootGameLocator = this.page.locator(".NO-IPpXzHDNjw_TLDlIo7");
         this.discountLocator = this.rootGameLocator.locator('.Discounted ._2fpFvkG2gjtlAHB3ZxS-_7');
-        this.gamesLocator = this.rootGameLocator.locator('.Panel');
         this.nameLocator = this.rootGameLocator.locator ('.StoreSaleWidgetTitle');
         this.linkLocator = this.rootGameLocator.locator('._2Va3O50Z5ksJJcpvj-JFDI a');
+        this.gameTableLocator = this.page.locator('.hWbTIbfDv_T6qCKW7NQHG');
     }
 
 
@@ -20,6 +21,7 @@ export class ActionPage {
         await test.step(`Navigate to ${this.currentLocale.menuActions}`, async () => {
             await this.page.waitForLoadState('load');
             await this.page.keyboard.press('End');
+            await this.gameTableLocator.scrollIntoViewIfNeeded();
             await this.mainMenu.selectMenuAction(name);
         })
     }
@@ -30,28 +32,23 @@ export class ActionPage {
      * @returns {Promise<{gameName: string, gameLink: string}>}
      */
     async findMaxDiscGame() {
+        await test.step(`Wait for loading`, async () => {
+            await this.page.waitForLoadState('load');
+        })
+            const locators = this.discountLocator;
+            const discounts = (await locators.allInnerTexts()).map((discountString) => Math.abs(Number.parseFloat(discountString)));
 
-        await this.page.waitForLoadState('load');
+            const max = Math.max(...discounts); //spread operator
 
-        const discountRoot = this.rootGameLocator;
+            const gameName = await this.nameLocator.nth(discounts.indexOf(max)).innerText();
 
-        const locators = this.discountLocator;
-        const discounts = (await locators.allInnerTexts()).map((discountString) => Math.abs(Number.parseFloat(discountString)));
+            const gameLink = await this.linkLocator.nth(discounts.indexOf(max)).getAttribute("href");
+            //"https://store.steampowered.com/app/271590/Grand_Theft_Auto_V?snr=1_241_4_action_100722"; // example of game with age check
 
-        const max = Math.max(...discounts); //spread operator
-
-       // console.log(await this.gamesLocator.nth(discounts.indexOf(max)).innerText());
-       const gameName = await this.nameLocator.nth(discounts.indexOf(max)).innerText();
-       console.log(gameName);
-
-       const gameLink = await this.linkLocator.nth(discounts.indexOf(max)).getAttribute("href");
-       console.log(gameLink);
-
-       return {
-           gameName,
-           gameLink
-       }
-
+            return {
+                gameName,
+                gameLink
+            }
     }
 
     /**
@@ -59,17 +56,11 @@ export class ActionPage {
      * @param {string} url
      * @returns {Promise<void>}
      */
-    async openGame (url){
-
-    }
-
-
-
-
-    async downloadingInstaller(){
-        await test.step('Download installer', async ()=>{
-            await this.mainMenu.installSteam();
+    async openGame (url) {
+        await test.step(`Open game with MAX discount`, async () => {
+            await this.page.goto(url);
         })
     }
+
 
 }
