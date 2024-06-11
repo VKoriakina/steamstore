@@ -15,7 +15,6 @@ test('game with maximum discount', async ({page, clientAge} ) => {
 
     await browser.navigateToMainPage();
     await mainPage.navigateMenu();
-    await page.pause();
     await actionPage.navigateSubMenu();
     const game = await actionPage.findMaxDiscGame();
     await actionPage.openGame(game.gameLink);
