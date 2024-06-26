@@ -5,15 +5,6 @@ const fixtures = {
 
     clientAge: [testDataJson.clientAge, {option: true}],
 
-    // async page({page}, use) {
-    // chromium
-    // const context = await base.chromium.launchPersistentContext('', {
-    //     channel: 'chrome'
-    // });
-    // const customPage = await context.newPage();
-    //
-    // await use(customPage);
-
     pageChromium: async ({page}, use) => {
         const context = await base.chromium.launchPersistentContext('', {
             channel: 'chrome'
