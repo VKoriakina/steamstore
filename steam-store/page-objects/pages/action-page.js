@@ -25,7 +25,6 @@ export class ActionPage {
      * @returns {Promise<{gameName: string, gameLink: string}>}
      */
     async findMaxDiscountGame() {
-        // return test.step(`find Max Discounted Game`, async () => {
         await this.page.waitForLoadState('load');
         const locators = this.discountLocator;
         const discounts = (await locators.allInnerTexts()).map((discountString) => Math.abs(Number.parseFloat(discountString)));
@@ -36,7 +35,6 @@ export class ActionPage {
             gameName,
             gameLink
         }
-        //  })
     }
 
     /**
